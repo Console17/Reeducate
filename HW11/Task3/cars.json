@@ -1,0 +1,22 @@
+[
+  {
+    "carName": "ferrari",
+    "carReleaseDate": 2020,
+    "carColor": "red"
+  },
+  {
+    "carName": "ferrari",
+    "carReleaseDate": 2020,
+    "carColor": "red"
+  },
+  {
+    "carName": "ferrari",
+    "carReleaseDate": 2015,
+    "carColor": "red"
+  },
+  {
+    "carName": "ferrari",
+    "carReleaseDate": 2025,
+    "carColor": "yellow"
+  }
+]
