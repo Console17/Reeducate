@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "name": "Messi",
+    "status": "GOAT",
+    "nation": "Argentina",
+    "age": 38
+  },
+  {
+    "id": 2,
+    "name": "Pedri",
+    "status": "Best player this season",
+    "nation": "Spain",
+    "age": 22
+  },
+  {
+    "id": 3,
+    "name": "Lamine Yamal",
+    "status": "Second best player right now",
+    "nation": "Spain",
+    "age": 18
+  },
+  {
+    "id": 4,
+    "name": "Giorgi Mamardashvili",
+    "status": "Liverpool second choise GK",
+    "nation": "Georgia",
+    "age": 25
+  },
+  {
+    "id": 5,
+    "name": "araujo",
+    "status": "Barca CB",
+    "nation": "Uruguay",
+    "age": 26
+  }
+]
