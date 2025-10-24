@@ -1,0 +1,26 @@
+[
+  {
+    "category": "sport",
+    "price": "14",
+    "id": "4b386034-d63a-4156-8b93-541effae51ea",
+    "createdAt": "2025-10-24T15:37:55.166Z"
+  },
+  {
+    "category": "sport",
+    "price": "25",
+    "id": "0892a8ff-d5b9-49ea-95dd-0d2cbc6cb7bb",
+    "createdAt": "2025-10-24T15:39:52.406Z"
+  },
+  {
+    "category": "shopping",
+    "price": "22",
+    "id": "71932ac4-e141-4d35-8bf9-5a2bf1bba30f",
+    "createdAt": "2025-10-24T15:40:57.073Z"
+  },
+  {
+    "category": "tech",
+    "price": "220",
+    "id": "01932ac4-f241-4d35-8bf9-5a2bf1bba30f",
+    "createdAt": "2025-10-20T15:40:57.073Z"
+  }
+]
