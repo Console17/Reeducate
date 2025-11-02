@@ -1,0 +1,32 @@
+[
+  {
+    "id": "8753ea57-dffd-493e-a66e-e98be637fc91",
+    "category": "game",
+    "price": 10
+  },
+  {
+    "id": "f1db2988-9bb2-41bd-8eca-490a58e5b83b",
+    "category": "sport",
+    "price": 40
+  },
+  {
+    "id": "8753ea57-dffd-493e-a66e-e98be637fc91",
+    "category": "game",
+    "price": 10
+  },
+  {
+    "id": "f1db2988-9bb2-41bd-8eca-490a58e5b83b",
+    "category": "sport",
+    "price": 40
+  },
+  {
+    "id": "8753ea57-dffd-493e-a66e-e98be637fc91",
+    "category": "bolo",
+    "price": 10
+  },
+  {
+    "id": "f1db2988-9bb2-41bd-8eca-490a58e5b83b",
+    "category": "sport",
+    "price": 40
+  }
+]
