@@ -6,27 +6,32 @@
   },
   {
     "id": "f1db2988-9bb2-41bd-8eca-490a58e5b83b",
-    "category": "sport",
-    "price": 40
+    "category": "feature-test",
+    "price": 250
   },
   {
-    "id": "8753ea57-dffd-493e-a66e-e98be637fc91",
+    "id": "8753ea57-dffd-493e-a66e-e98be632fc91",
     "category": "game",
     "price": 10
   },
   {
-    "id": "f1db2988-9bb2-41bd-8eca-490a58e5b83b",
+    "id": "f1db2988-92b2-41bd-8eca-490a58e5b83b",
     "category": "sport",
     "price": 40
   },
   {
-    "id": "8753ea57-dffd-493e-a66e-e98be637fc91",
+    "id": "9753ea57-dffd-493e-a66e-e98be637fc91",
     "category": "bolo",
     "price": 10
   },
   {
-    "id": "f1db2988-9bb2-41bd-8eca-490a58e5b83b",
+    "id": "f1d32988-9bb2-41bd-8eca-490a58e5b83b",
+    "category": "animal",
+    "price": 60
+  },
+  {
+    "id": "b36deb5a-98d8-492c-b14c-1f187a669a79",
     "category": "sport",
-    "price": 40
+    "price": 620
   }
 ]
