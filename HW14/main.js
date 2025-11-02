@@ -6,7 +6,7 @@ const app = express();
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.send("navigate to localhost:3000/users");
+  res.send("navigate to localhost:3000/expenses");
 });
 
 app.get("/expenses", async (req, res) => {
