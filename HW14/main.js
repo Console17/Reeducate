@@ -6,14 +6,14 @@ const app = express();
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.send("hello");
+  res.send("navigate to localhost:3000/users");
 });
 
 app.get("/expenses", async (req, res) => {
   const expenses = await readFile("expenses.json", true);
   console.log(req.query, "query");
-  const page = Number(req.query.page);
-  const take = Math.min(Number(req.query.take), 5);
+  const page = Number(req.query.page) || 1;
+  const take = Math.min(Number(req.query.take) || 5);
   res.json(expenses.slice((page - 1) * take, take * page));
 });
 
