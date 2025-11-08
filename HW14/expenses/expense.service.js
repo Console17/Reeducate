@@ -1,68 +1,89 @@
-import readFile from "../utils/readFile.js";
-import writeFile from "../utils/writeFile.js";
-import { v4 as uuidv4 } from "uuid";
+import expenseModel from "./expense.model.js";
 
 async function getAllExpenses(req, res) {
-  const expenses = await readFile("expenses.json", true);
-  console.log(req.query, "query");
+  const queryParams = req.query || {};
+  const filter = {};
+
+  if ("category" in queryParams) {
+    const categories = req.query.category.split(",");
+    filter["category"] = { $in: categories };
+  }
+  if ("amountFrom" in queryParams) {
+    filter["price"] = {
+      ...filter["price"],
+      $gte: Number(queryParams.amountFrom),
+    };
+  }
+  if ("amountTo" in queryParams) {
+    filter["price"] = {
+      ...filter["price"],
+      $lte: Number(queryParams.amountTo),
+    };
+  }
   const page = Number(req.query.page) || 1;
   const take = Math.min(Number(req.query.take) || 5);
-  res.json(expenses.slice((page - 1) * take, take * page));
+  const expenses = await expenseModel
+    .find(filter)
+    .skip((page - 1) * take)
+    .limit(take);
+
+  res.json(expenses);
 }
 
 async function createExpense(req, res) {
   const { category, price } = req.body;
-
-  const expenses = await readFile("expenses.json", true);
-  const newExpense = {
-    id: uuidv4(),
+  const newExpense = await expenseModel.create({
     category,
     price,
-  };
+  });
 
-  expenses.push(newExpense);
-  await writeFile("expenses.json", expenses);
-  res.status(201).send("created new expense");
+  return res.status(201).json({ success: true, data: newExpense });
+}
+
+async function getExpenseById(req, res) {
+  const id = req.params.id;
+  const expense = await expenseModel.findById(id);
+  if (!expense) {
+    return res.status(404).json({ message: "expense not found" });
+  }
+  res.json(expense);
 }
 
 async function deleteExpense(req, res) {
   const id = req.params.id;
-
-  const expenses = await readFile("expenses.json", true);
-  const index = expenses.findIndex((el) => el.id === id);
-  if (index === -1) {
-    res.status(404).send("user not found");
-    return;
+  const deletedExpense = await expenseModel.findByIdAndDelete(id);
+  if (!deletedExpense) {
+    return res.status(404).json({ message: "expense not found" });
   }
-  const deletedExpense = expenses.splice(index, 1);
-  await writeFile("expenses.json", expenses);
-  res.send(deletedExpense);
+  return res.json(deletedExpense);
 }
 
 async function updateExpense(req, res) {
   const id = req.params.id;
-
-  const expenses = await readFile("expenses.json", true);
-  const expenseToUpdate = expenses.find((el) => el.id === id);
-  if (!expenseToUpdate) {
-    res.status(404).send("user not found");
-    return;
+  const updatedExpense = await expenseModel.findByIdAndUpdate(id, req.body, {
+    new: true,
+  });
+  if (!updatedExpense) {
+    return res.status(404).json({ message: "expense not found" });
   }
 
-  if (req.body.category) {
-    expenseToUpdate.category = req.body.category;
-  }
+  return res.json(updatedExpense);
+}
 
-  if (req.body.price) {
-    expenseToUpdate.price = req.body.price;
-  }
-  await writeFile("expenses.json", expenses);
-  res.send("updated");
+async function getTopFiveExpense(req, res) {
+  const topFiveExpenses = await expenseModel
+    .find()
+    .sort({ price: -1 })
+    .limit(5);
+
+  return res.json(topFiveExpenses);
 }
 
 export const ExpenseService = {
   getAllExpenses,
   createExpense,
+  getExpenseById,
   deleteExpense,
   updateExpense,
+  getTopFiveExpense,
 };
