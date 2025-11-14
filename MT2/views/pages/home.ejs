@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home Page</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <%- include("../partials/header.ejs") %>
+    <button class="button"><a href="/create">Create new expense</a></button>
+
+    <form method="get" action="/">
+      <input type="text" name="category" placeholder="Search category" />
+      <button class="button">Search</button>
+    </form>
+
+    <% expenses.forEach(e=> { %>
+    <div class="expenseCard">
+      <h2>Category: <%= e.category %></h2>
+      <h2>price: <%= e.price %></h2>
+      <a href="/expenses/<%= e.id %>">Show more</a>
+      <a href="/expenses/<%= e.id %>/details">Update</a>
+      <form action="/api/expenses/<%= e.id %>/delete" method="get">
+        <button>Delete</button>
+      </form>
+    </div>
+    <% }) %> <%- include("../partials/footer.ejs") %>
+  </body>
+</html>

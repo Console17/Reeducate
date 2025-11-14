@@ -1,0 +1,27 @@
+[
+  {
+    "id": "cdf6d37f-c250-4a5e-a126-ad706c3d6648",
+    "category": "Sport",
+    "price": "300"
+  },
+  {
+    "id": "9ba60db6-495e-401f-8a9f-88e2014a9711",
+    "category": "Tour",
+    "price": "200"
+  },
+  {
+    "id": "1d28ba3c-9f63-41d1-bf11-56f08098b9e4",
+    "category": "sport",
+    "price": "22"
+  },
+  {
+    "id": "5c326028-3526-4cb3-9dc8-87ae078a0469",
+    "category": "categoria",
+    "price": "32"
+  },
+  {
+    "id": "be57706c-64df-458f-8654-b46a5831d683",
+    "category": "categoria",
+    "price": "2552"
+  }
+]
