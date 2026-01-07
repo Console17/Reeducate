@@ -1,12 +1,12 @@
 import express from "express";
-import logMiddleware from "./middlewares/log.middleware.js";
-import dbCondig from "./config/db.condig.js";
+import logMiddleware from "./middlewares/admin.middleware.js";
+import dbCondig from "./config/db.config.js";
+import productRouter from "./products/product.controller.js";
 
 const app = express();
+app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("hello from 123");
-});
+app.use("/products", productRouter);
 
 dbCondig().then(() => {
   app.listen(3000, () => {

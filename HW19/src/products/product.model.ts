@@ -1,17 +1,17 @@
 import mongoose from "mongoose";
 const { Schema } = mongoose;
 
-export interface Expense extends Document {
-  title: string;
+export interface Product extends Document {
+  name: string;
   description: string;
   price: number;
-  img: string;
+  photo: string;
   category: string;
 }
 
-const expenseSchema = new Schema<Expense>(
+const productSchema = new Schema<Product>(
   {
-    title: {
+    name: {
       type: String,
       required: true,
     },
@@ -23,7 +23,7 @@ const expenseSchema = new Schema<Expense>(
       type: Number,
       required: true,
     },
-    img: {
+    photo: {
       type: String,
       required: true,
     },
@@ -34,3 +34,5 @@ const expenseSchema = new Schema<Expense>(
   },
   { timestamps: true }
 );
+
+export default mongoose.model<Product>("Product", productSchema);
