@@ -6,12 +6,45 @@ import {
 } from '@nestjs/common';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
+import { QueryParamsDto } from './dto/query-params.dto';
 
 @Injectable()
 export class ExpensesService {
   private expenses = [
     {
-      id: 0,
+      id: 1,
+      category: 'category',
+      productName: 'productName',
+      quantity: 2,
+      price: 5,
+      totalPrice: 10,
+    },
+    {
+      id: 2,
+      category: 'category',
+      productName: 'productName',
+      quantity: 2,
+      price: 500,
+      totalPrice: 10,
+    },
+    {
+      id: 3,
+      category: 'category',
+      productName: 'productName',
+      quantity: 2,
+      price: 50,
+      totalPrice: 10,
+    },
+    {
+      id: 4,
+      category: 'category',
+      productName: 'productName',
+      quantity: 2,
+      price: 20,
+      totalPrice: 10,
+    },
+    {
+      id: 5,
       category: 'category',
       productName: 'productName',
       quantity: 2,
@@ -20,8 +53,29 @@ export class ExpensesService {
     },
   ];
 
-  getAllExpenses() {
-    return this.expenses;
+  getAllExpenses({ page, take, priceFrom, priceTo }: QueryParamsDto) {
+    let filteredExpenses = this.expenses;
+
+    if (priceFrom) {
+      filteredExpenses = filteredExpenses.filter(
+        (expense) => expense.price >= priceFrom,
+      );
+    }
+
+    if (priceTo) {
+      filteredExpenses = filteredExpenses.filter(
+        (expense) => expense.price <= priceTo,
+      );
+    }
+    const start = (page - 1) * take;
+    const end = page * take;
+    const data = filteredExpenses.slice(start, end);
+    return {
+      page,
+      take,
+      total: filteredExpenses.length,
+      expenses: data,
+    };
   }
 
   createExpense({ category, productName, quantity, price }: CreateExpenseDto) {

@@ -6,18 +6,20 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { ExpensesService } from './expenses.service';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
+import { QueryParamsDto } from './dto/query-params.dto';
 
 @Controller('/expenses')
 export class ExpensesController {
   constructor(private readonly expensesService: ExpensesService) {}
 
   @Get()
-  getAllExpenses() {
-    return this.expensesService.getAllExpenses();
+  getAllExpenses(@Query() query: QueryParamsDto) {
+    return this.expensesService.getAllExpenses(query);
   }
 
   @Post()

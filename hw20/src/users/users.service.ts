@@ -7,21 +7,75 @@ import {
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { QueryParamsDto } from './dto/query-params.dto';
 
 @Injectable()
 export class UsersService {
   private users = [
     {
-      id: 0,
+      id: 1,
       firstName: 'firstName',
       lastName: 'lastName',
       email: 'email',
       phoneNumber: 123,
-      gender: 'who knows',
+      gender: 'male',
+    },
+    {
+      id: 2,
+      firstName: 'firstName',
+      lastName: 'lastName',
+      email: 'email',
+      phoneNumber: 123,
+      gender: 'male',
+    },
+    {
+      id: 3,
+      firstName: 'firstName',
+      lastName: 'lastName',
+      email: 'test@gj',
+      phoneNumber: 123,
+      gender: 'male',
+    },
+    {
+      id: 4,
+      firstName: 'firstName',
+      lastName: 'lastName',
+      email: 'email',
+      phoneNumber: 123,
+      gender: 'female',
+    },
+    {
+      id: 5,
+      firstName: 'firstName',
+      lastName: 'lastName',
+      email: 'email',
+      phoneNumber: 123,
+      gender: 'female',
     },
   ];
-  getAllUsers() {
-    return this.users;
+  getAllUsers({ page, take, gender, email }: QueryParamsDto) {
+    let filteredUsers = this.users;
+
+    if (gender) {
+      filteredUsers = filteredUsers.filter((user) =>
+        user.gender.toLowerCase().startsWith(gender.toLowerCase()),
+      );
+    }
+
+    if (email) {
+      filteredUsers = filteredUsers.filter((user) =>
+        user.email.toLowerCase().startsWith(email.toLowerCase()),
+      );
+    }
+    const start = (page - 1) * take;
+    const end = page * take;
+    const data = filteredUsers.slice(start, end);
+    return {
+      page,
+      take,
+      total: filteredUsers.length,
+      users: data,
+    };
   }
 
   createUser({
@@ -47,6 +101,7 @@ export class UsersService {
       gender,
     };
     this.users.push(newUser);
+    return newUser;
   }
 
   getUserById(userId: number) {
