@@ -8,10 +8,11 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { QueryParamsDto } from './dto/query-params.dto';
+import { User } from './interface/users.interface';
 
 @Injectable()
 export class UsersService {
-  private users = [
+  private users: User[] = [
     {
       id: 1,
       firstName: 'firstName',
@@ -19,6 +20,8 @@ export class UsersService {
       email: 'email',
       phoneNumber: 123,
       gender: 'male',
+      subscriptionStartDate: null,
+      subscriptionEndDate: null,
     },
     {
       id: 2,
@@ -27,6 +30,8 @@ export class UsersService {
       email: 'email',
       phoneNumber: 123,
       gender: 'male',
+      subscriptionStartDate: null,
+      subscriptionEndDate: null,
     },
     {
       id: 3,
@@ -35,6 +40,8 @@ export class UsersService {
       email: 'test@gj',
       phoneNumber: 123,
       gender: 'male',
+      subscriptionStartDate: null,
+      subscriptionEndDate: null,
     },
     {
       id: 4,
@@ -43,6 +50,8 @@ export class UsersService {
       email: 'email',
       phoneNumber: 123,
       gender: 'female',
+      subscriptionStartDate: null,
+      subscriptionEndDate: null,
     },
     {
       id: 5,
@@ -51,6 +60,8 @@ export class UsersService {
       email: 'email',
       phoneNumber: 123,
       gender: 'female',
+      subscriptionStartDate: null,
+      subscriptionEndDate: null,
     },
   ];
   getAllUsers({ page, take, gender, email }: QueryParamsDto) {
@@ -92,6 +103,10 @@ export class UsersService {
       );
     }
     const lastId = this.users[this.users.length - 1]?.id || 0;
+    const startDate = new Date();
+    const endDate = new Date();
+    endDate.setMonth(endDate.getMonth() + 1);
+
     const newUser = {
       id: lastId + 1,
       firstName,
@@ -99,6 +114,8 @@ export class UsersService {
       email,
       phoneNumber,
       gender,
+      subscriptionStartDate: startDate,
+      subscriptionEndDate: endDate,
     };
     this.users.push(newUser);
     return newUser;
@@ -142,5 +159,32 @@ export class UsersService {
     };
 
     return this.users[userIndex];
+  }
+
+  getUserByEmail(email: string) {
+    return this.users.find((e) => e.email === email);
+  }
+
+  upgradeSubscription(email: string) {
+    const user = this.users.find((e) => e.email === email);
+
+    if (!user) {
+      throw new NotFoundException('User nor found!!!!!!!!!!!!!!');
+    }
+
+    const now = new Date();
+
+    if (!user.subscriptionEndDate || new Date(user.subscriptionEndDate) < now) {
+      user.subscriptionStartDate = now;
+      const newEnd = new Date();
+      newEnd.setMonth(newEnd.getMonth() + 1);
+      user.subscriptionEndDate = newEnd;
+    } else {
+      const currentEnd = new Date(user.subscriptionEndDate);
+      currentEnd.setMonth(currentEnd.getMonth() + 1);
+      user.subscriptionEndDate = currentEnd;
+    }
+
+    return user;
   }
 }
