@@ -5,7 +5,7 @@ import { UsersService } from '../users/users.service';
 export class SubscriptionGuard implements CanActivate {
   constructor(private readonly usersService: UsersService) {}
 
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const email = request.headers['email'];
 
@@ -14,7 +14,7 @@ export class SubscriptionGuard implements CanActivate {
       return true;
     }
 
-    const user = this.usersService.getUserByEmail(email);
+    const user = await this.usersService.getUserByEmail(email);
 
     if (!user) {
       request.hasActiveSubscription = false;

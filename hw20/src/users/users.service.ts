@@ -8,165 +8,95 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { QueryParamsDto } from './dto/query-params.dto';
-import { User } from './interface/users.interface';
+import { InjectModel } from '@nestjs/mongoose';
+import { User } from './schema/users.schema';
+import { Model, ObjectId } from 'mongoose';
 
 @Injectable()
 export class UsersService {
-  private users: User[] = [
-    {
-      id: 1,
-      firstName: 'firstName',
-      lastName: 'lastName',
-      email: 'email',
-      phoneNumber: 123,
-      gender: 'male',
-      subscriptionStartDate: null,
-      subscriptionEndDate: null,
-    },
-    {
-      id: 2,
-      firstName: 'firstName',
-      lastName: 'lastName',
-      email: 'email',
-      phoneNumber: 123,
-      gender: 'male',
-      subscriptionStartDate: null,
-      subscriptionEndDate: null,
-    },
-    {
-      id: 3,
-      firstName: 'firstName',
-      lastName: 'lastName',
-      email: 'test@gj',
-      phoneNumber: 123,
-      gender: 'male',
-      subscriptionStartDate: null,
-      subscriptionEndDate: null,
-    },
-    {
-      id: 4,
-      firstName: 'firstName',
-      lastName: 'lastName',
-      email: 'email',
-      phoneNumber: 123,
-      gender: 'female',
-      subscriptionStartDate: null,
-      subscriptionEndDate: null,
-    },
-    {
-      id: 5,
-      firstName: 'firstName',
-      lastName: 'lastName',
-      email: 'email',
-      phoneNumber: 123,
-      gender: 'female',
-      subscriptionStartDate: null,
-      subscriptionEndDate: null,
-    },
-  ];
-  getAllUsers({ page, take, gender, email }: QueryParamsDto) {
-    let filteredUsers = this.users;
+  constructor(
+    @InjectModel(User.name)
+    private userModel: Model<User>,
+  ) {}
+
+  async getAllUsers({ page, take, gender, email }: QueryParamsDto) {
+    let filter: any = {};
 
     if (gender) {
-      filteredUsers = filteredUsers.filter((user) =>
-        user.gender.toLowerCase().startsWith(gender.toLowerCase()),
-      );
+      filter.gender = { $regex: `^${gender}` };
     }
 
     if (email) {
-      filteredUsers = filteredUsers.filter((user) =>
-        user.email.toLowerCase().startsWith(email.toLowerCase()),
-      );
+      filter.email = { $regex: `^${email}` };
     }
-    const start = (page - 1) * take;
-    const end = page * take;
-    const data = filteredUsers.slice(start, end);
+    const skip = (page - 1) * take;
+
+    const [users, total] = await Promise.all([
+      this.userModel
+        .find(filter)
+        .skip(skip)
+        .limit(take)
+        .populate({ path: 'expenses', select: '-user' }),
+      ,
+      this.userModel.countDocuments(filter),
+    ]);
+
     return {
       page,
       take,
-      total: filteredUsers.length,
-      users: data,
+      total,
+      users,
     };
   }
 
-  createUser({
-    firstName,
-    lastName,
-    email,
-    phoneNumber,
-    gender,
-  }: CreateUserDto) {
-    if (!firstName || !lastName || !email || !phoneNumber || !gender) {
-      throw new HttpException(
-        'provide all data for user ',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-    const lastId = this.users[this.users.length - 1]?.id || 0;
+  async createUser(dto: CreateUserDto) {
+    const existUser = await this.userModel.findOne({ email: dto.email });
+    if (existUser) throw new BadRequestException('user already exists');
+
     const startDate = new Date();
     const endDate = new Date();
     endDate.setMonth(endDate.getMonth() + 1);
 
-    const newUser = {
-      id: lastId + 1,
-      firstName,
-      lastName,
-      email,
-      phoneNumber,
-      gender,
+    const newUser = await this.userModel.create({
+      ...dto,
       subscriptionStartDate: startDate,
       subscriptionEndDate: endDate,
-    };
-    this.users.push(newUser);
+    });
     return newUser;
   }
 
-  getUserById(userId: number) {
-    const user = this.users.find((el) => el.id === userId);
+  async getUserById(userId: string) {
+    const user = await this.userModel.findById(userId);
     if (!user) {
       throw new NotFoundException('User nor found!!!!!!!!!!!!!!');
     }
     return user;
   }
 
-  deleteUserById(userId: number) {
-    const userIndex = this.users.findIndex((el) => el.id === userId);
-    if (userIndex === -1) {
+  async deleteUserById(userId: string) {
+    const user = await this.userModel.findByIdAndDelete(userId);
+    if (!user) {
       throw new NotFoundException('User nor found!!!!!!!!!!!!!!');
     }
-    const deletedUser = this.users.splice(userIndex, 1);
-    return deletedUser;
+    return user;
   }
 
-  updateUserById(userId: number, updateUserDto: UpdateUserDto) {
-    const userIndex = this.users.findIndex((el) => el.id === userId);
-    if (userIndex === -1) {
-      throw new NotFoundException('User nor found!!!!!!!!!!!!!!');
-    }
+  async updateUserById(userId: string, updateUserDto: UpdateUserDto) {
+    const user = await this.userModel.findByIdAndUpdate(userId, updateUserDto, {
+      new: true,
+    });
 
-    const updateReq = {};
-    if (updateUserDto.firstName)
-      updateReq['firstName'] = updateUserDto.firstName;
-    if (updateUserDto.lastName) updateReq['lastName'] = updateUserDto.lastName;
-    if (updateUserDto.gender) updateReq['gender'] = updateUserDto.gender;
-    if (updateUserDto.email) updateReq['email'] = updateUserDto.email;
-    if (updateUserDto.phoneNumber)
-      updateReq['phoneNumber'] = updateUserDto.phoneNumber;
+    if (!user) throw new NotFoundException('User not found');
 
-    this.users[userIndex] = {
-      ...this.users[userIndex],
-      ...updateReq,
-    };
-
-    return this.users[userIndex];
+    return user;
   }
 
   getUserByEmail(email: string) {
-    return this.users.find((e) => e.email === email);
+    return this.userModel.findOne({ email });
   }
 
-  upgradeSubscription(email: string) {
-    const user = this.users.find((e) => e.email === email);
+  async upgradeSubscription(email: string) {
+    const user = await this.userModel.findOne({ email });
 
     if (!user) {
       throw new NotFoundException('User nor found!!!!!!!!!!!!!!');
@@ -184,6 +114,16 @@ export class UsersService {
       currentEnd.setMonth(currentEnd.getMonth() + 1);
       user.subscriptionEndDate = currentEnd;
     }
+
+    return user.save();
+  }
+
+  async addExpenseToUser(expenseId, userId) {
+    const user = await this.userModel.findByIdAndUpdate(
+      userId,
+      { $push: { expenses: expenseId } },
+      { new: true },
+    );
 
     return user;
   }

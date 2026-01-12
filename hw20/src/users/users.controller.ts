@@ -13,6 +13,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { QueryParamsDto } from './dto/query-params.dto';
+import { isValidObjectId } from 'src/common/dto/is-valid-object-id.dto';
 
 @Controller('/users')
 export class UsersController {
@@ -28,21 +29,21 @@ export class UsersController {
   }
 
   @Get(':id')
-  getUserById(@Param('id') id: string) {
-    return this.userService.getUserById(Number(id));
+  getUserById(@Param() { id }: isValidObjectId) {
+    return this.userService.getUserById(id);
   }
 
   @Delete(':id')
-  deleteUserById(@Param('id') id: string) {
-    return this.userService.deleteUserById(Number(id));
+  deleteUserById(@Param() { id }: isValidObjectId) {
+    return this.userService.deleteUserById(id);
   }
 
   @Patch(':id')
   updateUserById(
-    @Param('id') id: string,
+    @Param() { id }: isValidObjectId,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return this.userService.updateUserById(Number(id), updateUserDto);
+    return this.userService.updateUserById(id, updateUserDto);
   }
 
   @Post('upgrade-subscription')

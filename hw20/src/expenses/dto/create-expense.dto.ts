@@ -1,9 +1,15 @@
-import { IsIn, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+  IsIn,
+  IsMongoId,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+} from 'class-validator';
 
 export class CreateExpenseDto {
   @IsNotEmpty()
   @IsString()
-  @IsIn(['food', 'gym', 'electronics ', 'shopping'])
+  @IsIn(['food', 'gym', 'electronics', 'shopping'])
   category: string;
 
   @IsNotEmpty()
@@ -17,4 +23,8 @@ export class CreateExpenseDto {
   @IsNotEmpty()
   @IsNumber()
   price: number;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  user: string;
 }
