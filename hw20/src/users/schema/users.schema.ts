@@ -21,6 +21,13 @@ export class User {
   @Prop({ required: true })
   gender: string;
 
+  @Prop({
+    required: true,
+    enum: ['user', 'admin'],
+    default: 'user',
+  })
+  role: 'user' | 'admin';
+
   @Prop({ default: null })
   subscriptionStartDate: Date;
 

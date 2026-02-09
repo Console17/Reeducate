@@ -66,7 +66,7 @@ export class ExpensesService {
     return newExpense;
   }
 
-  async getExpenseById(expenseId, userId) {
+  async getExpenseById(expenseId, userId, role) {
     const expense = await this.expenseModel.findById(expenseId);
     if (!expense) {
       throw new NotFoundException('Expense not found');
@@ -78,12 +78,12 @@ export class ExpensesService {
     return expense;
   }
 
-  async deleteExpenseById(expenseId, userId) {
+  async deleteExpenseById(expenseId, userId, role) {
     const existExpense = await this.expenseModel.findById(expenseId);
     if (!existExpense) {
       throw new NotFoundException('Expense not found');
     }
-    if (existExpense.user !== userId) {
+    if (existExpense.user !== userId && role !== 'admin') {
       throw new UnauthorizedException('permition denied');
     }
     const expense = await this.expenseModel.findByIdAndDelete(expenseId);
@@ -94,11 +94,11 @@ export class ExpensesService {
     return expense;
   }
 
-  async updateExpenseById(expenseId, updateExpenseDto, userId) {
+  async updateExpenseById(expenseId, updateExpenseDto, userId, role) {
     const expense = await this.expenseModel.findById(expenseId);
     if (!expense) throw new NotFoundException('Expense not found');
 
-    if (expense.user !== userId) {
+    if (expense.user !== userId && role !== 'admin') {
       throw new UnauthorizedException('permition denied');
     }
 

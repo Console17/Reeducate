@@ -21,6 +21,7 @@ export class AuthService {
     phoneNumber,
     gender,
     password,
+    role,
   }: SignUpDto) {
     const existUser = await this.userModel.findOne({ email });
     if (existUser) throw new BadRequestException('user exists');
@@ -37,6 +38,7 @@ export class AuthService {
       phoneNumber,
       gender,
       password: hashedPassword,
+      role,
       subscriptionStartDate: startDate,
       subscriptionEndDate: endDate,
     });
@@ -54,6 +56,7 @@ export class AuthService {
 
     const payload = {
       userId: existUser._id,
+      role: existUser.role,
     };
 
     const token = await this.jwtService.sign(payload, { expiresIn: '1h' });

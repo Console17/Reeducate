@@ -16,6 +16,7 @@ import { QueryParamsDto } from './dto/query-params.dto';
 import { isValidObjectId } from 'src/common/dto/is-valid-object-id.dto';
 import { IsAuthGuard } from 'src/guards/is-auth.guard';
 import { UserId } from 'src/decorators/user-id.decorator';
+import { UserRole } from 'src/decorators/user-role.decorator';
 
 @Controller('/expenses')
 export class ExpensesController {
@@ -34,14 +35,22 @@ export class ExpensesController {
 
   @Get(':id')
   @UseGuards(IsAuthGuard)
-  getExpenseById(@Param() { id }: isValidObjectId, @UserId() userId) {
-    return this.expensesService.getExpenseById(id, userId);
+  getExpenseById(
+    @Param() { id }: isValidObjectId,
+    @UserId() userId,
+    @UserRole() role,
+  ) {
+    return this.expensesService.getExpenseById(id, userId, role);
   }
 
   @Delete(':id')
   @UseGuards(IsAuthGuard)
-  deleteExpenseById(@Param() { id }: isValidObjectId, @UserId() userId) {
-    return this.expensesService.deleteExpenseById(id, userId);
+  deleteExpenseById(
+    @Param() { id }: isValidObjectId,
+    @UserId() userId,
+    @UserRole() role,
+  ) {
+    return this.expensesService.deleteExpenseById(id, userId, role);
   }
 
   @Patch(':id')
@@ -50,7 +59,13 @@ export class ExpensesController {
     @Param() { id }: isValidObjectId,
     @Body() updateExpenseDto: UpdateExpenseDto,
     @UserId() userId,
+    @UserRole() role,
   ) {
-    return this.expensesService.updateExpenseById(id, updateExpenseDto, userId);
+    return this.expensesService.updateExpenseById(
+      id,
+      updateExpenseDto,
+      userId,
+      role,
+    );
   }
 }
