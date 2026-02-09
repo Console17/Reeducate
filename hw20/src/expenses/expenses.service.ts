@@ -5,6 +5,7 @@ import {
   Inject,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
@@ -13,12 +14,16 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Expsense } from './schema/expsenses.schema';
 import { Model } from 'mongoose';
 import { UsersService } from 'src/users/users.service';
+import { User } from 'src/users/schema/users.schema';
 
 @Injectable()
 export class ExpensesService {
   constructor(
     @InjectModel(Expsense.name)
     private expenseModel: Model<Expsense>,
+
+    @InjectModel(User.name)
+    private userModel: Model<User>,
 
     @Inject(forwardRef(() => UsersService))
     private usersService: UsersService,
@@ -48,40 +53,54 @@ export class ExpensesService {
     };
   }
 
-  async createExpense(dto: CreateExpenseDto) {
+  async createExpense(dto: CreateExpenseDto, userId) {
     const totalPrice = dto.quantity * dto.price;
 
     const newExpense = await this.expenseModel.create({
       ...dto,
+      user: userId,
       totalPrice,
     });
 
-    await this.usersService.addExpenseToUser(newExpense._id, dto.user);
+    await this.usersService.addExpenseToUser(newExpense._id, userId);
     return newExpense;
   }
 
-  async getExpenseById(expenseId: string) {
+  async getExpenseById(expenseId, userId) {
     const expense = await this.expenseModel.findById(expenseId);
     if (!expense) {
       throw new NotFoundException('Expense not found');
     }
-    return expense;
-  }
 
-  async deleteExpenseById(expenseId: string) {
-    const expense = await this.expenseModel.findByIdAndDelete(expenseId);
-    if (!expense) {
-      throw new NotFoundException('Expense not found');
+    if (expense.user !== userId) {
+      throw new UnauthorizedException('permition denied');
     }
     return expense;
   }
 
-  async updateExpenseById(
-    expenseId: string,
-    updateExpenseDto: UpdateExpenseDto,
-  ) {
+  async deleteExpenseById(expenseId, userId) {
+    const existExpense = await this.expenseModel.findById(expenseId);
+    if (!existExpense) {
+      throw new NotFoundException('Expense not found');
+    }
+    if (existExpense.user !== userId) {
+      throw new UnauthorizedException('permition denied');
+    }
+    const expense = await this.expenseModel.findByIdAndDelete(expenseId);
+
+    await this.userModel.findByIdAndUpdate(userId, {
+      $pull: { expenses: expense?._id },
+    });
+    return expense;
+  }
+
+  async updateExpenseById(expenseId, updateExpenseDto, userId) {
     const expense = await this.expenseModel.findById(expenseId);
     if (!expense) throw new NotFoundException('Expense not found');
+
+    if (expense.user !== userId) {
+      throw new UnauthorizedException('permition denied');
+    }
 
     if (updateExpenseDto.quantity !== undefined)
       expense.quantity = updateExpenseDto.quantity;

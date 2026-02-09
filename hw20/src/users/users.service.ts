@@ -49,22 +49,6 @@ export class UsersService {
     };
   }
 
-  async createUser(dto: CreateUserDto) {
-    const existUser = await this.userModel.findOne({ email: dto.email });
-    if (existUser) throw new BadRequestException('user already exists');
-
-    const startDate = new Date();
-    const endDate = new Date();
-    endDate.setMonth(endDate.getMonth() + 1);
-
-    const newUser = await this.userModel.create({
-      ...dto,
-      subscriptionStartDate: startDate,
-      subscriptionEndDate: endDate,
-    });
-    return newUser;
-  }
-
   async getUserById(userId: string) {
     const user = await this.userModel.findById(userId);
     if (!user) {

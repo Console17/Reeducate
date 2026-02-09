@@ -23,11 +23,6 @@ export class UsersController {
     return this.userService.getAllUsers(query);
   }
 
-  @Post()
-  createUser(@Body() createUserDto: CreateUserDto) {
-    return this.userService.createUser(createUserDto);
-  }
-
   @Get(':id')
   getUserById(@Param() { id }: isValidObjectId) {
     return this.userService.getUserById(id);
