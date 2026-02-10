@@ -15,6 +15,7 @@ import { Expsense } from './schema/expsenses.schema';
 import { Model } from 'mongoose';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/schema/users.schema';
+import { TopSpendersDto } from './dto/top-spenders.dto';
 
 @Injectable()
 export class ExpensesService {
@@ -51,6 +52,33 @@ export class ExpensesService {
       total,
       expenses,
     };
+  }
+
+  async getExpenseGroup() {
+    return this.expenseModel.aggregate([
+      {
+        $group: {
+          _id: '$category',
+          totalAmount: { $sum: '$totalPrice' },
+          itemsCount: { $sum: 1 },
+        },
+      },
+    ]);
+  }
+
+  async getTopSpenders({ limit }: TopSpendersDto) {
+    return this.expenseModel.aggregate([
+      {
+        $group: {
+          _id: '$user',
+          totalSpent: { $sum: '$totalPrice' },
+          itemsCount: { $sum: 1 },
+        },
+      },
+      {
+        $limit: limit,
+      },
+    ]);
   }
 
   async createExpense(dto: CreateExpenseDto, userId) {

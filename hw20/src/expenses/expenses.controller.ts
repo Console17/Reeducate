@@ -17,6 +17,7 @@ import { isValidObjectId } from 'src/common/dto/is-valid-object-id.dto';
 import { IsAuthGuard } from 'src/guards/is-auth.guard';
 import { UserId } from 'src/decorators/user-id.decorator';
 import { UserRole } from 'src/decorators/user-role.decorator';
+import { TopSpendersDto } from './dto/top-spenders.dto';
 
 @Controller('/expenses')
 export class ExpensesController {
@@ -25,6 +26,16 @@ export class ExpensesController {
   @Get()
   getAllExpenses(@Query() query: QueryParamsDto) {
     return this.expensesService.getAllExpenses(query);
+  }
+
+  @Get('/statistic')
+  getExpenseGroup() {
+    return this.expensesService.getExpenseGroup();
+  }
+
+  @Get('/top-spenders')
+  getTopSpenders(@Query() query: TopSpendersDto) {
+    return this.expensesService.getTopSpenders(query);
   }
 
   @Post()

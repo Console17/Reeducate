@@ -5,6 +5,8 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  Max,
+  Min,
 } from 'class-validator';
 
 export class SignUpDto {
@@ -15,6 +17,12 @@ export class SignUpDto {
   @IsNotEmpty()
   @IsString()
   lastName: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @Min(0)
+  @Max(150)
+  age: number;
 
   @IsNotEmpty()
   @IsString()

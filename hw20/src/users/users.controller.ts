@@ -28,6 +28,11 @@ export class UsersController {
     return this.userService.getAllUsers(query);
   }
 
+  @Get('/statistic')
+  getUsersGender() {
+    return this.userService.getUsersGender();
+  }
+
   @Get(':id')
   getUserById(@Param() { id }: isValidObjectId) {
     return this.userService.getUserById(id);

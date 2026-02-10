@@ -4,6 +4,7 @@ import {
   HttpStatus,
   Injectable,
   NotFoundException,
+  OnModuleInit,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -13,11 +14,18 @@ import { User } from './schema/users.schema';
 import { Model, ObjectId } from 'mongoose';
 
 @Injectable()
-export class UsersService {
+export class UsersService implements OnModuleInit {
   constructor(
     @InjectModel(User.name)
     private userModel: Model<User>,
   ) {}
+
+  async onModuleInit() {
+    await this.userModel.updateMany(
+      { isActive: { $exists: false } },
+      { $set: { isActive: false } },
+    );
+  }
 
   async getAllUsers({ page, take, gender, email }: QueryParamsDto) {
     let filter: any = {};
@@ -49,6 +57,16 @@ export class UsersService {
     };
   }
 
+  async getUsersGender() {
+    return this.userModel.aggregate([
+      {
+        $group: {
+          _id: '$gender',
+          avgAge: { $avg: '$age' },
+        },
+      },
+    ]);
+  }
   async getUserById(userId: string) {
     const user = await this.userModel.findById(userId);
     if (!user) {

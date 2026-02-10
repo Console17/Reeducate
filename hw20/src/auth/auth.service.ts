@@ -17,6 +17,7 @@ export class AuthService {
   async signUp({
     firstName,
     lastName,
+    age,
     email,
     phoneNumber,
     gender,
@@ -34,6 +35,7 @@ export class AuthService {
     await this.userModel.create({
       firstName,
       lastName,
+      age,
       email,
       phoneNumber,
       gender,

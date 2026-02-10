@@ -9,6 +9,9 @@ export class User {
   @Prop({ required: true })
   lastName: string;
 
+  @Prop({ required: true, min: 0, max: 150 })
+  age: number;
+
   @Prop({ required: true, unique: true, lowercase: true })
   email: string;
 
@@ -36,6 +39,9 @@ export class User {
 
   @Prop({ types: [mongoose.Types.ObjectId], ref: 'Expsense', default: [] })
   expenses: mongoose.Types.ObjectId[];
+
+  @Prop({ type: Boolean })
+  isActive: boolean;
 }
 
 export const userModel = SchemaFactory.createForClass(User);

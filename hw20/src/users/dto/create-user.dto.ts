@@ -3,6 +3,8 @@ import {
   isEmail,
   IsNotEmpty,
   IsNumber,
+  Max,
+  Min,
   IsString,
 } from 'class-validator';
 
@@ -14,6 +16,12 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
   lastName: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @Min(0)
+  @Max(150)
+  age: number;
 
   @IsNotEmpty()
   @IsString()
