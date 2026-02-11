@@ -48,7 +48,6 @@ export class UsersService implements OnModuleInit {
         .skip(skip)
         .limit(take)
         .populate({ path: 'expenses', select: '-user' }),
-      ,
       this.userModel.countDocuments(filter),
     ]);
 
