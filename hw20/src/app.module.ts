@@ -7,6 +7,7 @@ import { ProductsModule } from './products/products.module';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
+import { AwsS3Module } from './aws-s3/aws-s3.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { AuthModule } from './auth/auth.module';
     ExpenseModule,
     ProductsModule,
     AuthModule,
+    AwsS3Module,
   ],
   controllers: [AppController],
   providers: [AppService],

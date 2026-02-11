@@ -8,7 +8,9 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -30,6 +32,7 @@ import {
   ApiResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('/users')
 export class UsersController {
@@ -159,6 +162,11 @@ export class UsersController {
     return this.userService.deleteUserById(userId);
   }
 
+  @Delete('user-image')
+  DeleteImg(@Body('fileId') fileId: String) {
+    return this.userService.deleteFile(fileId);
+  }
+
   @Delete(':id')
   @UseGuards(IsAuthGuard, RolesGuard)
   @Roles('admin')
@@ -266,5 +274,17 @@ export class UsersController {
   })
   upgradeSubscription(@Body('email') email: string) {
     return this.userService.upgradeSubscription(email);
+  }
+
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file'))
+  uploadFile(@UploadedFile() file: Express.Multer.File) {
+    console.log(file);
+    return this.userService.uploadUserPhoto(file);
+  }
+
+  @Post('get-file')
+  getFile(@Body('fileId') fileId: String) {
+    return this.userService.getFile(fileId);
   }
 }

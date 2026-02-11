@@ -8,7 +8,10 @@ import {
   Post,
   Query,
   Req,
+  UploadedFile,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -22,6 +25,7 @@ import {
   ApiOkResponse,
   ApiParam,
 } from '@nestjs/swagger';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('products')
 export class ProductsController {
@@ -121,5 +125,11 @@ export class ProductsController {
     @Body() updateProductDto: UpdateProductDto,
   ) {
     return this.productsService.updateProductById(id, updateProductDto);
+  }
+
+  @Post('upload-many')
+  @UseInterceptors(FilesInterceptor('files'))
+  uploadMany(@UploadedFiles() files: Array<Express.Multer.File>) {
+    return this.productsService.uploadManyPhotos(files);
   }
 }

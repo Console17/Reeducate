@@ -4,10 +4,13 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { Model } from 'mongoose';
 import { Product } from './schema/products.schema';
 import { InjectModel } from '@nestjs/mongoose';
+import { AwsS3Service } from 'src/aws-s3/aws-s3.service';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class ProductsService {
   constructor(
+    private awsS3Service: AwsS3Service,
     @InjectModel(Product.name)
     private productModel: Model<Product>,
   ) {}
@@ -45,5 +48,20 @@ export class ProductsService {
     });
     if (!product) throw new NotFoundException('Product not found');
     return product;
+  }
+
+  async uploadManyPhotos(files: Array<Express.Multer.File>) {
+    const images: string[] = [];
+    for (let file of files) {
+      const ext = file.mimetype.split('/')[1];
+      const fileId = `images/${randomUUID()}.${ext}`;
+      const result = await this.awsS3Service.uploadFile(
+        fileId,
+        file.buffer,
+        file.mimetype,
+      );
+      images.push(result);
+    }
+    return images;
   }
 }

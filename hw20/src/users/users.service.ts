@@ -12,10 +12,13 @@ import { QueryParamsDto } from './dto/query-params.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schema/users.schema';
 import { Model, ObjectId } from 'mongoose';
+import { AwsS3Service } from 'src/aws-s3/aws-s3.service';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class UsersService implements OnModuleInit {
   constructor(
+    private awsS3Service: AwsS3Service,
     @InjectModel(User.name)
     private userModel: Model<User>,
   ) {}
@@ -128,5 +131,28 @@ export class UsersService implements OnModuleInit {
     );
 
     return user;
+  }
+
+  async uploadUserPhoto(file: Express.Multer.File) {
+    const ext = file.mimetype.split('/')[1];
+
+    const fileId = `images/${randomUUID()}.${ext}`;
+    console.log(fileId);
+    const result = await this.awsS3Service.uploadFile(
+      fileId,
+      file.buffer,
+      file.mimetype,
+    );
+    return result;
+  }
+
+  async getFile(fileId: String) {
+    const result = await this.awsS3Service.getFile(fileId);
+    return result;
+  }
+
+  async deleteFile(fileId: String) {
+    const result = await this.awsS3Service.deleteFile(fileId);
+    return result;
   }
 }
