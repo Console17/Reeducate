@@ -1,0 +1,78 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type UserPayloadWithoutPosts {
+  _id: ID!
+  fullName: String!
+  email: String!
+}
+
+type PostPayload {
+  _id: ID!
+  title: String!
+  description: String!
+  author: UserPayloadWithoutPosts!
+}
+
+type PostPayloadWithoutAuthor {
+  _id: ID!
+  title: String!
+  description: String!
+}
+
+type UserPayload {
+  _id: ID!
+  fullName: String!
+  email: String!
+  posts: [PostPayloadWithoutAuthor!]!
+}
+
+type AuthPayload {
+  token: String!
+  user: UserPayload!
+}
+
+type Query {
+  getAllUsers: [UserPayload!]!
+  getAllPosts: [PostPayload!]!
+  getPostById(id: String!): PostPayload!
+  currentUser: UserPayload!
+}
+
+type Mutation {
+  updateUser(id: String!, updateUserInput: UpdateUserInput!): UserPayload!
+  deleteUser(id: String!): UserPayload!
+  createPost(createPostInput: CreatePostInput!): PostPayload!
+  updatePostById(id: String!, updatePostInput: UpdatePostInput!): PostPayload!
+  deletePostById(id: String!): PostPayload!
+  signUp(signUpInput: SignUpInput!): AuthPayload!
+  signIn(signInInput: SignInInput!): AuthPayload!
+}
+
+input UpdateUserInput {
+  fullName: String
+  email: String
+  password: String
+}
+
+input CreatePostInput {
+  title: String!
+  description: String!
+}
+
+input UpdatePostInput {
+  title: String
+  description: String
+}
+
+input SignUpInput {
+  fullName: String!
+  email: String!
+  password: String!
+}
+
+input SignInInput {
+  email: String!
+  password: String!
+}
