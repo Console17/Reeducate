@@ -1,0 +1,33 @@
+services:
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+    networks:
+      - app-network
+    volumes:
+      - mongo_data:/data/db
+  backend:
+    build: .
+    depends_on:
+      - mongo
+    environment:
+      MONGO_URL: ${MONGO_URL}
+      JWT_TOKEN: ${JWT_TOKEN}
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
+      AWS_BUCKET_NAME: ${AWS_BUCKET_NAME}
+      AWS_REGION: ${AWS_REGION}
+    restart: always
+    ports:
+      - 3000:3000
+    networks:
+      - app-network
+
+volumes:
+  mongo_data:
+
+networks:
+  app-network:
+    driver: bridge
