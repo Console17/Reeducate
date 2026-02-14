@@ -42,6 +42,15 @@ export class User {
 
   @Prop({ type: Boolean })
   isActive: boolean;
+
+  @Prop({ type: Boolean, default: false })
+  isVerified: boolean;
+
+  @Prop({ type: String })
+  OTPCode: string;
+
+  @Prop({ type: String })
+  OTPCodeExpirationDate: string;
 }
 
 export const userModel = SchemaFactory.createForClass(User);

@@ -14,6 +14,7 @@ import { User } from './schema/users.schema';
 import { Model, ObjectId } from 'mongoose';
 import { AwsS3Service } from 'src/aws-s3/aws-s3.service';
 import { randomUUID } from 'crypto';
+import { EmailSenderService } from 'src/email-sender/email-sender.service';
 
 @Injectable()
 export class UsersService implements OnModuleInit {
@@ -21,6 +22,7 @@ export class UsersService implements OnModuleInit {
     private awsS3Service: AwsS3Service,
     @InjectModel(User.name)
     private userModel: Model<User>,
+    private emailSenderService: EmailSenderService,
   ) {}
 
   async onModuleInit() {
@@ -82,6 +84,13 @@ export class UsersService implements OnModuleInit {
     if (!user) {
       throw new NotFoundException('User nor found!!!!!!!!!!!!!!');
     }
+
+    await this.emailSenderService.sendEmailToSomeone({
+      to: user.email,
+      subject: 'account deleted',
+      text: `account deleted`,
+    });
+
     return user;
   }
 
